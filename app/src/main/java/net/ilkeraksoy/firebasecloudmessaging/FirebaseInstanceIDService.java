@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.jaredrummler.android.device.DeviceName;
 
 import java.io.IOException;
 
@@ -17,15 +18,17 @@ public class FirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
 
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        sendRegistrationToServer(refreshedToken);
-        Log.d("Refreshed token", refreshedToken);
+        String token = FirebaseInstanceId.getInstance().getToken();
+        String deviceName= DeviceName.getDeviceName();
+        sendRegistrationToServer(deviceName, token);
+        Log.d("Refreshed token", token);
     }
 
-    private void sendRegistrationToServer(String token) {
+    private void sendRegistrationToServer(String deviceName, String token) {
 
         OkHttpClient client = new OkHttpClient();
         RequestBody body = new FormBody.Builder()
+                .add("Device", deviceName)
                 .add("Token", token)
                 .build();
 

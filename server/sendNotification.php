@@ -1,12 +1,12 @@
 <?php
 
- function sendNotification($tokens, $message) { 	
+ function sendNotification($tokens, $title, $message) { 	
 
  	 $url = 'https://fcm.googleapis.com/fcm/send';
 
  	 $fields = array(
  	 	'registration_ids' => $tokens,
- 	 	'data' => $message);
+ 	 	'data' => $title, $message);
 
  	 $headers = array(
  	 	'Authorization:key = SERVER_API_KEY',
@@ -33,27 +33,33 @@
  	   return $result;
  }
 
- $conn = mysqli_connect("localhost","root","","fcm");
+ if(isset($_POST['Title']) && isset($_POST['Message'])){
 
- $sql = "select token from users";
+ 	$conn = mysqli_connect("localhost","root","","fcm");
 
- $result = mysqli_query($conn,$sql);
+ 	$sql = "select token from users";
 
- $tokens = array();
+ 	$result = mysqli_query($conn,$sql);
 
- if(mysqli_num_rows($result) > 0 ){
+ 	$tokens = array();
 
- 	while ($row = mysqli_fetch_assoc($result)){
+ 	if(mysqli_num_rows($result) > 0 ){
 
- 		$tokens[] = $row["token"];
+ 		while ($row = mysqli_fetch_assoc($result)){
+
+ 			$tokens[] = $row["token"];
+ 		}
+
  	}
+
+ 	mysqli_close($conn);
+
+ 	$title = array("title" => $_POST['Title']);
+
+ 	$message = array("message" => $_POST['Message']);
+
+ 	$message_status = sendNotification($tokens, $title, $message);
+
+ 	echo $message_status;
  }
-
- mysqli_close($conn);
-
- $message = array("message" => "This is a test notification!");
-
- $message_status = sendNotification($tokens, $message);
-
- echo $message_status; 
  ?>

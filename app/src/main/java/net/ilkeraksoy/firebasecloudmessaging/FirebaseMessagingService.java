@@ -12,10 +12,10 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        showNotification(remoteMessage.getData().get("message"));
+        showNotification(remoteMessage.getData().get("title"), remoteMessage.getData().get("message"));
     }
 
-    public void showNotification(String messageBody) {
+    public void showNotification(String messageTitle, String messageBody) {
 
         Intent intent = new Intent(this, MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -24,7 +24,7 @@ public class FirebaseMessagingService extends com.google.firebase.messaging.Fire
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setAutoCancel(true)
-                .setContentTitle("FCM Test Message")
+                .setContentTitle(messageTitle)
                 .setContentText(messageBody)
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentIntent(pendingIntent);
